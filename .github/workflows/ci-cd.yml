@@ -33,4 +33,23 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -DskipTests -Dsonar.projectKey=devsecops-jm-usach_devops_prueba_final
 
+      - name: Ejecutar en background
+        run: |
+          java -Dheadless -jar target/*.jar &
+          echo $! > pid.txt
+    
+      - name: Esperar app disponible
+        run: |
+            for i in {1..15}; do
+              if curl -s http://localhost:8080/; then
+                echo "✅ App disponible"
+                exit 0
+              else
+                echo "⏳ Esperando la app... intento $i"
+                sleep 5
+              fi
+            done
+            echo "❌ La app no se levantó a tiempo"
+            exit 1
+
       
