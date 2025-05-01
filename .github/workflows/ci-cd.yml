@@ -51,5 +51,18 @@ jobs:
             done
             echo "❌ La app no se levantó a tiempo"
             exit 1
+  
+      - name: test endpoint de ejemplo
+        run: |
+            echo "Probando endpoint"
+            curl -v "http://localhost:8080/"
+    
+      - name: Test with Selenium
+        run: |
+          mvn test -Dtest=com.devops.calculator.CalculatorSeleniumTest
+
+      - name: Stop app
+        run: |
+          kill $(cat pid.txt) || echo "No se pudo detener la app"
 
       
